@@ -13,34 +13,34 @@ trait BeShaved {
     fn be_shaved(&mut self, fun: impl FnOnce(&mut Beard));
 }
 
-trait Shaver {
+trait Barber {
     fn shave(&self, shavee: &mut impl BeShaved);
 }
 
-struct ShaverMan {
+struct BarberMan {
     beard: Beard,
 }
 
 // The type system disallows us to shave self as we shave others
-impl ShaverMan {
+impl BarberMan {
     pub fn new() -> Self {
         Self { beard: Beard(128) }
     }
 }
 
-impl SelfShave for ShaverMan {
+impl SelfShave for BarberMan {
     fn shave_self(&mut self) {
         self.beard.0 = 0;
     }
 }
 
-impl BeShaved for ShaverMan {
-    fn be_shaved(&mut self, shaver: impl FnOnce(&mut Beard)) {
-        shaver(&mut self.beard);
+impl BeShaved for BarberMan {
+    fn be_shaved(&mut self, barber: impl FnOnce(&mut Beard)) {
+        barber(&mut self.beard);
     }
 }
 
-impl Shaver for ShaverMan {
+impl Barber for BarberMan {
     fn shave(&self, shavee: &mut impl BeShaved) {
         shavee.be_shaved(|beard| beard.0 = 0);
     }
@@ -48,9 +48,9 @@ impl Shaver for ShaverMan {
 
 /// has no beard;
 /// should be !Shave
-struct ShaverWoman;
+struct BarberWoman;
 
-impl Shaver for ShaverWoman {
+impl Barber for BarberWoman {
     fn shave(&self, shavee: &mut impl BeShaved) {
         shavee.be_shaved(|beard| beard.0 = 5);
     }
@@ -80,24 +80,24 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Citizen, SelfShave, Shaver, ShaverMan};
+    use crate::{Citizen, SelfShave, Barber, BarberMan};
 
     #[test]
-    fn test_shaver_man() {
-        let mut shaver = ShaverMan::new();
+    fn test_barber_man() {
+        let mut barber = BarberMan::new();
         let mut shavee = Citizen::new();
 
-        shaver.shave(&mut shavee);
-        shaver.shave_self();
+        barber.shave(&mut shavee);
+        barber.shave_self();
         // This should be noted:
         //
         // ```rust
-        // shaver.shave(&mut shaver);
+        // Barber.shave(&mut Barber);
         // ```
         //
         // is rejected by the BorrowChecker
-        // since shaver is borrowed immutably as Shaver and mutably as Shave.
-        // So, shaver can't modify itself the same way he would for any other.
+        // since Barber is borrowed immutably as Barber and mutably as Shave.
+        // So, Barber can't modify itself the same way he would for any other.
         // This makes Barber's Paradox unrepresentable in this style.
         //
         // It is said though that Rust's type system is Turing complete.
