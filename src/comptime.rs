@@ -82,7 +82,8 @@ type BarberShaves<C> = <Barber as Shaves<C>>::Shave;
 // Now we know that Barber ShavesSelf, that implies that Barber CanNotShave Barber.
 //
 // That implies that ShavesSelf<ShavesSelf<Barber>> must not exist as Barber
-const CHECK_NON_SHAVES: BarberShaves<ShavesSelf<ShavesSelf<Barber>>> = CanNotShave;
+const CHECK_NON_SHAVES: BarberShaves<ShavesSelf<ShavesSelf<Barber>>> =
+    CanNotShave;
 // const CHECK_AGAIN: BarberShaves<NeverShavesSelf<ShavesSelf<Barber>>> = CanNotShave;
 
 // const CHECK_SHAVES: BarberShaves<NeverShavesSelf<Barber>> = CanShave;

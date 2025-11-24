@@ -80,7 +80,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Citizen, SelfShave, Barber, BarberMan};
+    use crate::{Barber, BarberMan, Citizen, SelfShave};
 
     #[test]
     fn test_barber_man() {
